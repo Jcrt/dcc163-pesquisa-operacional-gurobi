@@ -8,61 +8,17 @@
 
 using System;
 using Gurobi;
+using PesquisaOperacional.Gurobi.Core.Model;
+using PesquisaOperacional.Gurobi.Core.Solver;
 
-class lp_cs
+class Program
 {
     static void Main(string[] args)
     {
-        if (args.Length < 1)
-        {
-            Console.Out.WriteLine("Usage: lp_cs filename");
-            return;
-        }
-
         try
         {
-            GRBEnv env = new GRBEnv();
-            GRBModel model = new GRBModel(env, args[0]);
-
-            model.Optimize();
-
-            int optimstatus = model.Status;
-
-            if (optimstatus == GRB.Status.INF_OR_UNBD)
-            {
-                model.Parameters.Presolve = 0;
-                model.Optimize();
-                optimstatus = model.Status;
-            }
-
-            if (optimstatus == GRB.Status.OPTIMAL)
-            {
-                double objval = model.ObjVal;
-                Console.WriteLine("Optimal objective: " + objval);
-            }
-            else if (optimstatus == GRB.Status.INFEASIBLE)
-            {
-                Console.WriteLine("Model is infeasible");
-
-                // compute and write out IIS
-
-                model.ComputeIIS();
-                model.Write("model.ilp");
-            }
-            else if (optimstatus == GRB.Status.UNBOUNDED)
-            {
-                Console.WriteLine("Model is unbounded");
-            }
-            else
-            {
-                Console.WriteLine("Optimization was stopped with status = "
-                                   + optimstatus);
-            }
-
-            // Dispose of model and env
-            model.Dispose();
-            env.Dispose();
-
+            var _solver = new GurobiSolver();
+            _solver.Run(new EntradaViewModel());
         }
         catch (GRBException e)
         {
