@@ -36,7 +36,6 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 {
                     var taxaProducao = produto.GetTaxaUnidadeHora();
                     var variavelProduto = _varArray[produto.GetNomeVariavel(diaSemanaEnum)];
-
                 }
             }
         }
