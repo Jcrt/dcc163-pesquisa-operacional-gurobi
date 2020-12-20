@@ -7,21 +7,86 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
 {
     public class GurobiSolver
     {
-        readonly GRBEnv _grbEnv;
         readonly GRBModel _grbModel;
         readonly IDictionary<string, GRBVar> _varArray;
 
         public GurobiSolver()
         {
-            _grbEnv = new GRBEnv();
-            _grbModel = new GRBModel(_grbEnv);
+            var grbEnv = new GRBEnv();
+            _grbModel = new GRBModel(grbEnv);
             _varArray = new Dictionary<string, GRBVar>();
         }
 
         public void Run(EntradaViewModel entrada)
         {
             CriaVariaveis(entrada);
+            CriaFuncaoObjetivo(entrada);
             CriaRestricaoHR(entrada);
+            CriaRestricaoHE(entrada);
+            CriaRestricaoDemandaMinima(entrada);
+            OtimizaModelo();
+        }
+
+        private void OtimizaModelo()
+        {
+            _grbModel.Optimize();
+        }
+
+        #region Função Objetivo
+
+        private void CriaFuncaoObjetivo(EntradaViewModel entrada)
+        {
+            var expressaoObjetivo = new GRBLinExpr();
+
+            entrada.Produtos.ForEach(item =>
+            {
+                var custoHR = item.CustoRegular;
+                var custoHE = item.CustoHoraExtra;
+
+                foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
+                {
+                    var diaSemanaEnum = (DiaDaSemana)diaSemana;
+                    
+                    var qtdeProdutoHR = _varArray[item.GetNomeVariavel(diaSemanaEnum)];
+                    expressaoObjetivo.AddTerm(custoHR, qtdeProdutoHR);
+                    
+                    var qtdeProdutoHE = _varArray[item.GetNomeVariavel(diaSemanaEnum, true)];
+                    expressaoObjetivo.AddTerm(custoHE, qtdeProdutoHE);
+                }
+            });
+            
+            _grbModel.SetObjective(expressaoObjetivo, GRB.MINIMIZE);
+        }
+
+        #endregion Função Objetivo
+
+        #region Restrições
+
+        private void CriaRestricaoHE(EntradaViewModel entrada)
+        {
+            foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
+            {
+                var expressaoLinear = new GRBLinExpr();
+
+                var diaSemanaEnum = (DiaDaSemana)diaSemana;
+
+                var cargaHorariaExtraDisponivelDiaria = entrada.CargaHorariaExtraDisponivel[diaSemanaEnum];
+
+                entrada.Produtos.ForEach(produto =>
+                {
+                    var taxaProducao = produto.GetTaxaUnidadeHora();
+                    var variavelProduto = _varArray[produto.GetNomeVariavel(diaSemanaEnum, true)];
+
+                    expressaoLinear.AddTerm(taxaProducao, variavelProduto);
+                });
+
+                _grbModel.AddConstr(
+                    expressaoLinear, 
+                    GRB.LESS_EQUAL, 
+                    cargaHorariaExtraDisponivelDiaria, 
+                    $"HorasExtrasDisponiveis[{diaSemana}]"
+                );
+            }
         }
 
         private void CriaRestricaoHR(EntradaViewModel entrada)
@@ -34,17 +99,47 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
 
                 var cargaHorariaDisponivelDiaria = entrada.CargaHorariaDisponivel[diaSemanaEnum];
 
-                foreach (var produto in entrada.Produtos)
+                entrada.Produtos.ForEach(produto =>
                 {
                     var taxaProducao = produto.GetTaxaUnidadeHora();
                     var variavelProduto = _varArray[produto.GetNomeVariavel(diaSemanaEnum)];
 
                     expressaoLinear.AddTerm(taxaProducao, variavelProduto);
-                }
+                });
 
-                _grbModel.AddConstr(expressaoLinear, GRB.LESS_EQUAL, cargaHorariaDisponivelDiaria, $"HorasDisponiveis[{diaSemana}]");
+                _grbModel.AddConstr(
+                    expressaoLinear, 
+                    GRB.EQUAL, 
+                    cargaHorariaDisponivelDiaria, 
+                    $"HorasRegularesDisponiveis[{diaSemana}]"
+                );
             }
         }
+
+        private void CriaRestricaoDemandaMinima(EntradaViewModel entrada)
+        {
+            entrada.Produtos.ForEach(item =>
+            {
+                foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
+                {
+                    var diaSemanaEnum = (DiaDaSemana)diaSemana;
+                    var qtdeProdutoHR = _varArray[item.GetNomeVariavel(diaSemanaEnum)];
+                    var qtdeProdutoHE = _varArray[item.GetNomeVariavel(diaSemanaEnum, true)];
+                    var demandaProdutoDia = item.Demanda[diaSemanaEnum];
+
+                    _grbModel.AddConstr(
+                        qtdeProdutoHE + qtdeProdutoHR, 
+                        GRB.GREATER_EQUAL, 
+                        demandaProdutoDia, 
+                        $"DemandaMinima[{item.Nome}][{diaSemanaEnum}]"
+                    );
+                }
+            });
+        }
+
+        #endregion Restrições
+
+        #region Variáveis
 
         void CriaVariaveis(EntradaViewModel entrada)
         {
@@ -60,5 +155,7 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 }
             });
         }
+
+        #endregion Variáveis
     }
 }
