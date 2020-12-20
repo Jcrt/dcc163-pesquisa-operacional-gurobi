@@ -69,10 +69,12 @@ class Program
     private static void LeDadosDaEquipe(DataTable dataSet)
     {
         Console.WriteLine("Iniciando leitura dos dados da equipe");
-        for (int i = 0; i < 6; i++)
+        for (int i = 1; i < 7; i++)
         {
-            var item = dataSet.Rows[2].ItemArray[i];
-            _entradaViewModel.CargaHorariaDisponivel.Add((DiaDaSemana)i + 1, int.Parse(item.ToString()));
+            var horaRegular = dataSet.Rows[2].ItemArray[i];
+            var horaExtra = dataSet.Rows[3].ItemArray[i];
+            _entradaViewModel.CargaHorariaDisponivel.Add((DiaDaSemana)i, int.Parse(horaRegular.ToString()));
+            _entradaViewModel.CargaHorariaExtraDisponivel.Add((DiaDaSemana)i, int.Parse(horaExtra.ToString()));
         }
         Console.WriteLine("Leitura dos dados da equipe encerrada");
     }
@@ -86,7 +88,7 @@ class Program
 
         Console.WriteLine("Iniciando leitura dos dados dos produtos");
 
-        for (int i = 6; i < dataSet.Rows.Count; i++)
+        for (int i = 7; i < dataSet.Rows.Count; i++)
         {
             var produto = new ProdutoViewModel();
             produto.Nome = dataSet.Rows[i].ItemArray[0].ToString();
