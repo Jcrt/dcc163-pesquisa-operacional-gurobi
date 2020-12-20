@@ -17,8 +17,6 @@ namespace PesquisaOperacional.Gurobi.Core.Model
 
         public Dictionary<DiaDaSemana, int> Demanda { get; set; }
 
-        public int Validade { get; set; }
-
         public float CustoRegular { get; set; }
 
         public float CustoHoraExtra { get; set; }

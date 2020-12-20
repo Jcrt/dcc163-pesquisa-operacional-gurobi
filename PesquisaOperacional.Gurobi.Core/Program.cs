@@ -91,14 +91,13 @@ class Program
             var produto = new ProdutoViewModel();
             produto.Nome = dataSet.Rows[i].ItemArray[0].ToString();
             produto.TaxaProducao = float.Parse(dataSet.Rows[i].ItemArray[1].ToString());
-            produto.CustoRegular = float.Parse(dataSet.Rows[i].ItemArray[8].ToString());
-            produto.CustoHoraExtra = float.Parse(dataSet.Rows[i].ItemArray[9].ToString());
-            produto.Validade = int.Parse(dataSet.Rows[i].ItemArray[10].ToString());
             for (int j = 2; j < 8; j++)
             {
                 var item = dataSet.Rows[i].ItemArray[j];
                 produto.Demanda.Add((DiaDaSemana)j - 1, int.Parse(item.ToString()));
             }
+            produto.CustoRegular = float.Parse(dataSet.Rows[i].ItemArray[8].ToString());
+            produto.CustoHoraExtra = float.Parse(dataSet.Rows[i].ItemArray[9].ToString());
             _entradaViewModel.Produtos.Add(produto);
         }
         Console.WriteLine("Leitura dos dados dos produtos encerrada");
@@ -119,8 +118,10 @@ class Program
         catch (GRBException e)
         {
             Console.WriteLine("Error code: " + e.ErrorCode + ". " + e.Message);
-        } 
-        MockSaida(); //RETIRAR ESSE MÉTODO
+        }
+#warning RETIRAR ESSE MÉTODO
+        //TODO: RETIRAR ESSE MÉTODO
+        MockSaida(); 
     }
 
     /// <summary>
@@ -161,7 +162,8 @@ class Program
         pck.Save();
     }
 
-    //RETIRAR ESSE MÉTODO
+#warning RETIRAR ESSE MÉTODO
+    //TODO: RETIRAR ESSE MÉTODO
     private static void MockSaida()
     {
         List<ProdutoViewModel> produtos = new List<ProdutoViewModel>();
