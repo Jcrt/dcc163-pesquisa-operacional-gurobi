@@ -9,7 +9,7 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
     {
         readonly GRBEnv _grbEnv;
         readonly GRBModel _grbModel;
-        private readonly IDictionary<string, GRBVar> _varArray;
+        readonly IDictionary<string, GRBVar> _varArray;
 
         public GurobiSolver()
         {
@@ -28,6 +28,8 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
         {
             foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
             {
+                var expressaoLinear = new GRBLinExpr();
+
                 var diaSemanaEnum = (DiaDaSemana)diaSemana;
 
                 var cargaHorariaDisponivelDiaria = entrada.CargaHorariaDisponivel[diaSemanaEnum];
@@ -36,7 +38,11 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 {
                     var taxaProducao = produto.GetTaxaUnidadeHora();
                     var variavelProduto = _varArray[produto.GetNomeVariavel(diaSemanaEnum)];
+
+                    expressaoLinear.AddTerm(taxaProducao, variavelProduto);
                 }
+
+                _grbModel.AddConstr(expressaoLinear, GRB.LESS_EQUAL, cargaHorariaDisponivelDiaria, $"HorasDisponiveis[{diaSemana}]");
             }
         }
 
