@@ -1,25 +1,15 @@
-﻿/* Copyright 2020, Gurobi Optimization, LLC */
-
-/* This example reads an LP model from a file and solves it.
-   If the model is infeasible or unbounded, the example turns off
-   presolve and solves the model again. If the model is infeasible,
-   the example computes an Irreducible Inconsistent Subsystem (IIS),
-   and writes it to a file. */
-
-using ExcelDataReader;
+﻿using ExcelDataReader;
 using Gurobi;
 using OfficeOpenXml;
 using PesquisaOperacional.Gurobi.Core.Model;
 using PesquisaOperacional.Gurobi.Core.Solver;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
 
 class Program
 {
-
     private static string _inputPath = "..\\..\\..\\data\\input.xlsx";
     private static string _outputPath = "..\\..\\..\\data\\output.xlsx";
     private static EntradaViewModel _entradaViewModel;
@@ -115,15 +105,12 @@ class Program
         try
         {
             var _solver = new GurobiSolver();
-            _solver.Run(_entradaViewModel);
+            _saidaViewModel = _solver.Run(_entradaViewModel);
         }
         catch (GRBException e)
         {
             Console.WriteLine("Error code: " + e.ErrorCode + ". " + e.Message);
         }
-#warning RETIRAR ESSE MÉTODO
-        //TODO: RETIRAR ESSE MÉTODO
-        MockSaida(); 
     }
 
     /// <summary>
@@ -162,32 +149,5 @@ class Program
         }
 
         pck.Save();
-    }
-
-#warning RETIRAR ESSE MÉTODO
-    //TODO: RETIRAR ESSE MÉTODO
-    private static void MockSaida()
-    {
-        List<ProdutoViewModel> produtos = new List<ProdutoViewModel>();
-
-        foreach (var produto in _entradaViewModel.Produtos)
-        {
-            var produtoSaida = new ProdutoViewModel()
-            {
-                Nome = produto.Nome
-            };
-
-            for (int i = 1; i < 7; i++)
-            {
-                produtoSaida.Producao.Add((DiaDaSemana)i, i * 10);
-            }
-
-            produtos.Add(produtoSaida);
-        }
-
-        _saidaViewModel = new SaidaViewModel
-        {
-            Produtos = produtos
-        };
     }
 }

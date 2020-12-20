@@ -2,7 +2,7 @@
 
 namespace PesquisaOperacional.Gurobi.Core.Model
 {
-    class SaidaViewModel
+    public class SaidaViewModel
     {
         public List<ProdutoViewModel> Produtos { get; set; }
     }
