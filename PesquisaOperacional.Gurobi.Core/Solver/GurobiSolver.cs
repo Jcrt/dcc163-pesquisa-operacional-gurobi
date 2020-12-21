@@ -86,9 +86,12 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
         {
             foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
             {
-                var expressaoLinear = new GRBLinExpr();
-
                 var diaSemanaEnum = (DiaDaSemana)diaSemana;
+
+                if (diaSemanaEnum == DiaDaSemana.Domingo)
+                    continue;
+
+                var expressaoLinear = new GRBLinExpr();
 
                 var cargaHorariaExtraDisponivelDiaria = entrada.CargaHorariaExtraDisponivel[diaSemanaEnum];
 
@@ -117,9 +120,12 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
         {
             foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
             {
+                var diaSemanaEnum = (DiaDaSemana)diaSemana;
+                if (diaSemanaEnum == DiaDaSemana.Domingo)
+                    continue;
+
                 var expressaoLinear = new GRBLinExpr();
 
-                var diaSemanaEnum = (DiaDaSemana)diaSemana;
 
                 var cargaHorariaDisponivelDiaria = entrada.CargaHorariaDisponivel[diaSemanaEnum];
 
@@ -151,12 +157,19 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
                 {
                     var diaSemanaEnum = (DiaDaSemana)diaSemana;
+
+                    if (diaSemanaEnum == DiaDaSemana.Domingo)
+                        continue;
+
                     var qtdeProdutoHR = _varArray[item.GetNomeVariavel(diaSemanaEnum)];
                     var qtdeProdutoHE = _varArray[item.GetNomeVariavel(diaSemanaEnum, true)];
+                    var qtdeProdutoExcesso = _varArray[item.GetNomeVariavel(diaSemanaEnum, isExcesso: true)];
                     var demandaProdutoDia = item.Demanda[diaSemanaEnum];
+                    var diaAnteriorEnum = EnumHelper.DiaAnterior(diaSemanaEnum);
+                    var qtdeProdutoExcessoDiaAnterior = _varArray[item.GetNomeVariavel(diaAnteriorEnum, isExcesso: true)];
 
                     _grbModel.AddConstr(
-                        qtdeProdutoHE + qtdeProdutoHR, 
+                        qtdeProdutoExcessoDiaAnterior + qtdeProdutoHE + qtdeProdutoHR - qtdeProdutoExcesso, 
                         GRB.GREATER_EQUAL, 
                         demandaProdutoDia, 
                         $"DemandaMinima[{item.Nome}][{diaSemanaEnum}]"
@@ -182,9 +195,11 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 {
                     var produtoHR = item.GetNomeVariavel((DiaDaSemana)diaSemana, false);
                     var produtoHE = item.GetNomeVariavel((DiaDaSemana)diaSemana, true);
+                    var produtoEstoque = item.GetNomeVariavel((DiaDaSemana)diaSemana, isExcesso: true);
 
                     _varArray.Add(produtoHR, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoHR));
                     _varArray.Add(produtoHE, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoHE));
+                    _varArray.Add(produtoEstoque, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoEstoque));
                 }
             });
         }
@@ -218,8 +233,10 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                     var diaSemanaEnum = (DiaDaSemana)diaSemana;
                     var producaoHR = Convert.ToInt32(_grbModel.GetVarByName(produto.GetNomeVariavel(diaSemanaEnum)).X);
                     var producaoHE = Convert.ToInt32(_grbModel.GetVarByName(produto.GetNomeVariavel(diaSemanaEnum, true)).X);
+                    var excesso = Convert.ToInt32(_grbModel.GetVarByName(produto.GetNomeVariavel(diaSemanaEnum, isExcesso:true)).X);
 
                     produto.Producao[diaSemanaEnum] = producaoHR + producaoHE;
+                    produto.Excesso[diaSemanaEnum] = excesso;
                 }
             });
 

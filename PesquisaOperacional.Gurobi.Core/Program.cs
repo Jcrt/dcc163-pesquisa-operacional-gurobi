@@ -127,23 +127,35 @@ class Program
         var planilhaSaida = pck.Workbook.Worksheets.Add("Saida");
         planilhaSaida.Cells["A1"].Value = "Produto";
         planilhaSaida.Cells["B1"].Value = "Produção segunda";
-        planilhaSaida.Cells["C1"].Value = "Produção terça";
-        planilhaSaida.Cells["D1"].Value = "Produção quarta";
-        planilhaSaida.Cells["E1"].Value = "Produção quinta";
-        planilhaSaida.Cells["F1"].Value = "Produção sexta";
-        planilhaSaida.Cells["G1"].Value = "Produção sábado";
-        planilhaSaida.Cells["A1:G1"].Style.Font.Bold = true;
+        planilhaSaida.Cells["C1"].Value = "Excesso segunda";
+        planilhaSaida.Cells["D1"].Value = "Produção terça";
+        planilhaSaida.Cells["E1"].Value = "Excesso terça";
+        planilhaSaida.Cells["F1"].Value = "Produção quarta";
+        planilhaSaida.Cells["G1"].Value = "Excesso quarta";
+        planilhaSaida.Cells["H1"].Value = "Produção quinta";
+        planilhaSaida.Cells["I1"].Value = "Excesso quinta";
+        planilhaSaida.Cells["J1"].Value = "Produção sexta";
+        planilhaSaida.Cells["K1"].Value = "Excesso sexta";
+        planilhaSaida.Cells["L1"].Value = "Produção sábado";
+        planilhaSaida.Cells["M1"].Value = "Excesso sábado";
+        planilhaSaida.Cells["A1:M1"].Style.Font.Bold = true;
 
         var linha = 2;
         foreach (var produto in _saidaViewModel.Produtos)
         {
             planilhaSaida.Cells["A" + linha].Value = produto.Nome;
             planilhaSaida.Cells["B" + linha].Value = produto.Producao[DiaDaSemana.Segunda];
-            planilhaSaida.Cells["C" + linha].Value = produto.Producao[DiaDaSemana.Terça];
-            planilhaSaida.Cells["D" + linha].Value = produto.Producao[DiaDaSemana.Quarta];
-            planilhaSaida.Cells["E" + linha].Value = produto.Producao[DiaDaSemana.Quinta];
-            planilhaSaida.Cells["F" + linha].Value = produto.Producao[DiaDaSemana.Sexta];
-            planilhaSaida.Cells["G" + linha].Value = produto.Producao[DiaDaSemana.Sábado];
+            planilhaSaida.Cells["C" + linha].Value = produto.Excesso[DiaDaSemana.Segunda];
+            planilhaSaida.Cells["D" + linha].Value = produto.Producao[DiaDaSemana.Terça];
+            planilhaSaida.Cells["E" + linha].Value = produto.Excesso[DiaDaSemana.Terça];
+            planilhaSaida.Cells["F" + linha].Value = produto.Producao[DiaDaSemana.Quarta];
+            planilhaSaida.Cells["G" + linha].Value = produto.Excesso[DiaDaSemana.Quarta];
+            planilhaSaida.Cells["H" + linha].Value = produto.Producao[DiaDaSemana.Quinta];
+            planilhaSaida.Cells["I" + linha].Value = produto.Excesso[DiaDaSemana.Quinta];
+            planilhaSaida.Cells["J" + linha].Value = produto.Producao[DiaDaSemana.Sexta];
+            planilhaSaida.Cells["K" + linha].Value = produto.Excesso[DiaDaSemana.Sexta];
+            planilhaSaida.Cells["L" + linha].Value = produto.Producao[DiaDaSemana.Sábado];
+            planilhaSaida.Cells["M" + linha].Value = produto.Excesso[DiaDaSemana.Sábado];
 
             linha++;
         }

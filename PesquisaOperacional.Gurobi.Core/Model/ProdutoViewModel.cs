@@ -7,8 +7,18 @@ namespace PesquisaOperacional.Gurobi.Core.Model
     {
         public ProdutoViewModel()
         {
-            Demanda = new Dictionary<DiaDaSemana, int>();
-            Producao = new Dictionary<DiaDaSemana, int>();
+            Demanda = new Dictionary<DiaDaSemana, int>
+            {
+                { DiaDaSemana.Domingo, 0 }
+            };
+            Producao = new Dictionary<DiaDaSemana, int>
+            {
+                { DiaDaSemana.Domingo, 0 }
+            };
+            Excesso = new Dictionary<DiaDaSemana, int>
+            {
+                { DiaDaSemana.Domingo, 0 }
+            };
         }
 
         public string Nome { get; set; }
@@ -29,11 +39,16 @@ namespace PesquisaOperacional.Gurobi.Core.Model
             return 1 / TaxaProducao;
         }
 
-        public string GetNomeVariavel(DiaDaSemana diaSemana, bool isHoraExtra = false)
+        public string GetNomeVariavel(DiaDaSemana diaSemana, bool isHoraExtra = false, bool isExcesso = false)
         {
+            string modificador = string.Empty;
             var tipoHora = !isHoraExtra ? "HR" : "HE";
+            if (isExcesso)
+                modificador = "excesso";
+            else
+                modificador = tipoHora;
 
-            return $"{GetNomeLimpo()}_{tipoHora}_{diaSemana.ToString().ToUpper()}";
+            return $"{GetNomeLimpo()}_{modificador}_{diaSemana.ToString().ToUpper()}";
         }
 
         public string GetNomeLimpo()
@@ -42,5 +57,6 @@ namespace PesquisaOperacional.Gurobi.Core.Model
         }
 
         public Dictionary<DiaDaSemana, int> Producao { get; set; }
+        public Dictionary<DiaDaSemana, int> Excesso { get; set; }
     }
 }
