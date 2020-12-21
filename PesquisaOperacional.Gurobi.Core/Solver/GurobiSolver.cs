@@ -195,11 +195,11 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 {
                     var produtoHR = item.GetNomeVariavel((DiaDaSemana)diaSemana, false);
                     var produtoHE = item.GetNomeVariavel((DiaDaSemana)diaSemana, true);
-                    var produtoEstoque = item.GetNomeVariavel((DiaDaSemana)diaSemana, isExcesso: true);
+                    var produtoExcesso = item.GetNomeVariavel((DiaDaSemana)diaSemana, isExcesso: true);
 
                     _varArray.Add(produtoHR, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoHR));
                     _varArray.Add(produtoHE, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoHE));
-                    _varArray.Add(produtoEstoque, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoEstoque));
+                    _varArray.Add(produtoExcesso, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoExcesso));
                 }
             });
         }
