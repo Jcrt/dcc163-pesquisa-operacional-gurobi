@@ -133,7 +133,7 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
 
                 _grbModel.AddConstr(
                     expressaoLinear, 
-                    GRB.EQUAL, 
+                    GRB.LESS_EQUAL, 
                     cargaHorariaDisponivelDiaria, 
                     $"HorasRegularesDisponiveis[{diaSemana}]"
                 );
@@ -150,16 +150,15 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
             {
                 foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
                 {
+                    GRBLinExpr qtdeProdutoExcessoDiaAnterior; 
                     var diaSemanaEnum = (DiaDaSemana)diaSemana;
-
-                    
 
                     var qtdeProdutoHR = _varArray[item.GetNomeVariavel(diaSemanaEnum)];
                     var qtdeProdutoHE = _varArray[item.GetNomeVariavel(diaSemanaEnum, true)];
                     var qtdeProdutoExcesso = _varArray[item.GetNomeVariavel(diaSemanaEnum, isExcesso: true)];
                     var demandaProdutoDia = item.Demanda[diaSemanaEnum];
                     var diaAnteriorEnum = EnumHelper.DiaAnterior(diaSemanaEnum);
-                    GRBLinExpr qtdeProdutoExcessoDiaAnterior;
+
                     if (diaSemanaEnum == DiaDaSemana.Segunda)
                         qtdeProdutoExcessoDiaAnterior = 0;
                     else
@@ -194,9 +193,9 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                     var produtoHE = item.GetNomeVariavel((DiaDaSemana)diaSemana, true);
                     var produtoExcesso = item.GetNomeVariavel((DiaDaSemana)diaSemana, isExcesso: true);
 
-                    _varArray.Add(produtoHR, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoHR));
-                    _varArray.Add(produtoHE, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoHE));
-                    _varArray.Add(produtoExcesso, _grbModel.AddVar(0, double.MaxValue, 1, GRB.INTEGER, produtoExcesso));
+                    _varArray.Add(produtoHR, _grbModel.AddVar(0, double.MaxValue, 1, GRB.CONTINUOUS, produtoHR));
+                    _varArray.Add(produtoHE, _grbModel.AddVar(0, double.MaxValue, 1, GRB.CONTINUOUS, produtoHE));
+                    _varArray.Add(produtoExcesso, _grbModel.AddVar(0, double.MaxValue, 1, GRB.CONTINUOUS, produtoExcesso));
                 }
             });
         }
