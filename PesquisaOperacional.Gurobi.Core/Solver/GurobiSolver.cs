@@ -88,9 +88,6 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
             {
                 var diaSemanaEnum = (DiaDaSemana)diaSemana;
 
-                if (diaSemanaEnum == DiaDaSemana.Domingo)
-                    continue;
-
                 var expressaoLinear = new GRBLinExpr();
 
                 var cargaHorariaExtraDisponivelDiaria = entrada.CargaHorariaExtraDisponivel[diaSemanaEnum];
@@ -121,11 +118,8 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
             foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
             {
                 var diaSemanaEnum = (DiaDaSemana)diaSemana;
-                if (diaSemanaEnum == DiaDaSemana.Domingo)
-                    continue;
 
                 var expressaoLinear = new GRBLinExpr();
-
 
                 var cargaHorariaDisponivelDiaria = entrada.CargaHorariaDisponivel[diaSemanaEnum];
 
@@ -158,15 +152,18 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 {
                     var diaSemanaEnum = (DiaDaSemana)diaSemana;
 
-                    if (diaSemanaEnum == DiaDaSemana.Domingo)
-                        continue;
+                    
 
                     var qtdeProdutoHR = _varArray[item.GetNomeVariavel(diaSemanaEnum)];
                     var qtdeProdutoHE = _varArray[item.GetNomeVariavel(diaSemanaEnum, true)];
                     var qtdeProdutoExcesso = _varArray[item.GetNomeVariavel(diaSemanaEnum, isExcesso: true)];
                     var demandaProdutoDia = item.Demanda[diaSemanaEnum];
                     var diaAnteriorEnum = EnumHelper.DiaAnterior(diaSemanaEnum);
-                    var qtdeProdutoExcessoDiaAnterior = _varArray[item.GetNomeVariavel(diaAnteriorEnum, isExcesso: true)];
+                    GRBLinExpr qtdeProdutoExcessoDiaAnterior;
+                    if (diaSemanaEnum == DiaDaSemana.Segunda)
+                        qtdeProdutoExcessoDiaAnterior = 0;
+                    else
+                        qtdeProdutoExcessoDiaAnterior = _varArray[item.GetNomeVariavel(diaAnteriorEnum, isExcesso: true)];
 
                     _grbModel.AddConstr(
                         qtdeProdutoExcessoDiaAnterior + qtdeProdutoHE + qtdeProdutoHR - qtdeProdutoExcesso, 
@@ -231,9 +228,13 @@ namespace PesquisaOperacional.Gurobi.Core.Solver
                 foreach (var diaSemana in Enum.GetValues(typeof(DiaDaSemana)))
                 {
                     var diaSemanaEnum = (DiaDaSemana)diaSemana;
+
                     var producaoHR = Convert.ToInt32(_grbModel.GetVarByName(produto.GetNomeVariavel(diaSemanaEnum)).X);
                     var producaoHE = Convert.ToInt32(_grbModel.GetVarByName(produto.GetNomeVariavel(diaSemanaEnum, true)).X);
                     var excesso = Convert.ToInt32(_grbModel.GetVarByName(produto.GetNomeVariavel(diaSemanaEnum, isExcesso:true)).X);
+
+                    if (producaoHE > 0)
+                        saidaViewModel.TeveHoraExtra[diaSemanaEnum] = true;
 
                     produto.Producao[diaSemanaEnum] = producaoHR + producaoHE;
                     produto.Excesso[diaSemanaEnum] = excesso;

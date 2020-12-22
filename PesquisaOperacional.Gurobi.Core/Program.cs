@@ -128,34 +128,47 @@ class Program
         planilhaSaida.Cells["A1"].Value = "Produto";
         planilhaSaida.Cells["B1"].Value = "Produção segunda";
         planilhaSaida.Cells["C1"].Value = "Excesso segunda";
-        planilhaSaida.Cells["D1"].Value = "Produção terça";
-        planilhaSaida.Cells["E1"].Value = "Excesso terça";
-        planilhaSaida.Cells["F1"].Value = "Produção quarta";
-        planilhaSaida.Cells["G1"].Value = "Excesso quarta";
-        planilhaSaida.Cells["H1"].Value = "Produção quinta";
-        planilhaSaida.Cells["I1"].Value = "Excesso quinta";
-        planilhaSaida.Cells["J1"].Value = "Produção sexta";
-        planilhaSaida.Cells["K1"].Value = "Excesso sexta";
-        planilhaSaida.Cells["L1"].Value = "Produção sábado";
-        planilhaSaida.Cells["M1"].Value = "Excesso sábado";
-        planilhaSaida.Cells["A1:M1"].Style.Font.Bold = true;
+        planilhaSaida.Cells["D1"].Value = "Necessário hora extra segunda";
+        planilhaSaida.Cells["E1"].Value = "Produção terça";
+        planilhaSaida.Cells["F1"].Value = "Excesso terça";
+        planilhaSaida.Cells["G1"].Value = "Necessário hora extra terça";
+        planilhaSaida.Cells["H1"].Value = "Produção quarta";
+        planilhaSaida.Cells["I1"].Value = "Excesso quarta";
+        planilhaSaida.Cells["J1"].Value = "Necessário hora extra quarta";
+        planilhaSaida.Cells["K1"].Value = "Produção quinta";
+        planilhaSaida.Cells["L1"].Value = "Excesso quinta";
+        planilhaSaida.Cells["M1"].Value = "Necessário hora extra quinta";
+        planilhaSaida.Cells["N1"].Value = "Produção sexta";
+        planilhaSaida.Cells["O1"].Value = "Excesso sexta";
+        planilhaSaida.Cells["P1"].Value = "Necessário hora extra sexta";
+        planilhaSaida.Cells["Q1"].Value = "Produção sábado";
+        planilhaSaida.Cells["R1"].Value = "Excesso sábado";
+        planilhaSaida.Cells["S1"].Value = "Necessário hora extra sábado";
+        planilhaSaida.Cells["A1:S1"].Style.Font.Bold = true;
 
         var linha = 2;
+
         foreach (var produto in _saidaViewModel.Produtos)
         {
             planilhaSaida.Cells["A" + linha].Value = produto.Nome;
             planilhaSaida.Cells["B" + linha].Value = produto.Producao[DiaDaSemana.Segunda];
             planilhaSaida.Cells["C" + linha].Value = produto.Excesso[DiaDaSemana.Segunda];
-            planilhaSaida.Cells["D" + linha].Value = produto.Producao[DiaDaSemana.Terça];
-            planilhaSaida.Cells["E" + linha].Value = produto.Excesso[DiaDaSemana.Terça];
-            planilhaSaida.Cells["F" + linha].Value = produto.Producao[DiaDaSemana.Quarta];
-            planilhaSaida.Cells["G" + linha].Value = produto.Excesso[DiaDaSemana.Quarta];
-            planilhaSaida.Cells["H" + linha].Value = produto.Producao[DiaDaSemana.Quinta];
-            planilhaSaida.Cells["I" + linha].Value = produto.Excesso[DiaDaSemana.Quinta];
-            planilhaSaida.Cells["J" + linha].Value = produto.Producao[DiaDaSemana.Sexta];
-            planilhaSaida.Cells["K" + linha].Value = produto.Excesso[DiaDaSemana.Sexta];
-            planilhaSaida.Cells["L" + linha].Value = produto.Producao[DiaDaSemana.Sábado];
-            planilhaSaida.Cells["M" + linha].Value = produto.Excesso[DiaDaSemana.Sábado];
+            planilhaSaida.Cells["D" + linha].Value = _saidaViewModel.TeveHoraExtra[DiaDaSemana.Segunda] ? "Sim" : "Não";
+            planilhaSaida.Cells["E" + linha].Value = produto.Producao[DiaDaSemana.Terça];
+            planilhaSaida.Cells["F" + linha].Value = produto.Excesso[DiaDaSemana.Terça];
+            planilhaSaida.Cells["G" + linha].Value = _saidaViewModel.TeveHoraExtra[DiaDaSemana.Terça] ? "Sim" : "Não";
+            planilhaSaida.Cells["H" + linha].Value = produto.Producao[DiaDaSemana.Quarta];
+            planilhaSaida.Cells["I" + linha].Value = produto.Excesso[DiaDaSemana.Quarta];
+            planilhaSaida.Cells["J" + linha].Value = _saidaViewModel.TeveHoraExtra[DiaDaSemana.Quarta] ? "Sim" : "Não";
+            planilhaSaida.Cells["K" + linha].Value = produto.Producao[DiaDaSemana.Quinta];
+            planilhaSaida.Cells["L" + linha].Value = produto.Excesso[DiaDaSemana.Quinta];
+            planilhaSaida.Cells["M" + linha].Value = _saidaViewModel.TeveHoraExtra[DiaDaSemana.Quinta] ? "Sim" : "Não";
+            planilhaSaida.Cells["N" + linha].Value = produto.Producao[DiaDaSemana.Sexta];
+            planilhaSaida.Cells["O" + linha].Value = produto.Excesso[DiaDaSemana.Sexta];
+            planilhaSaida.Cells["P" + linha].Value = _saidaViewModel.TeveHoraExtra[DiaDaSemana.Sexta] ? "Sim" : "Não";
+            planilhaSaida.Cells["Q" + linha].Value = produto.Producao[DiaDaSemana.Sábado];
+            planilhaSaida.Cells["R" + linha].Value = produto.Excesso[DiaDaSemana.Sábado];
+            planilhaSaida.Cells["S" + linha].Value = _saidaViewModel.TeveHoraExtra[DiaDaSemana.Sábado] ? "Sim" : "Não";
 
             linha++;
         }

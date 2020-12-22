@@ -10,14 +10,8 @@ namespace PesquisaOperacional.Gurobi.Core.Model
         public EntradaViewModel()
         {
             Produtos = new List<ProdutoViewModel>();
-            CargaHorariaDisponivel = new Dictionary<DiaDaSemana, int>
-            {
-                { DiaDaSemana.Domingo, 0 }
-            };
-            CargaHorariaExtraDisponivel = new Dictionary<DiaDaSemana, int>
-            {
-                { DiaDaSemana.Domingo, 0 }
-            };
+            CargaHorariaDisponivel = new Dictionary<DiaDaSemana, int>();
+            CargaHorariaExtraDisponivel = new Dictionary<DiaDaSemana, int>();
         }
 
         public List<ProdutoViewModel> Produtos { get; set; }

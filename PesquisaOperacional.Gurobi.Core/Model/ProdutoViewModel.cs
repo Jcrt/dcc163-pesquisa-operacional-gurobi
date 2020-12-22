@@ -7,18 +7,9 @@ namespace PesquisaOperacional.Gurobi.Core.Model
     {
         public ProdutoViewModel()
         {
-            Demanda = new Dictionary<DiaDaSemana, int>
-            {
-                { DiaDaSemana.Domingo, 0 }
-            };
-            Producao = new Dictionary<DiaDaSemana, int>
-            {
-                { DiaDaSemana.Domingo, 0 }
-            };
-            Excesso = new Dictionary<DiaDaSemana, int>
-            {
-                { DiaDaSemana.Domingo, 0 }
-            };
+            Demanda = new Dictionary<DiaDaSemana, int>();
+            Producao = new Dictionary<DiaDaSemana, int>();
+            Excesso = new Dictionary<DiaDaSemana, int>();
         }
 
         public string Nome { get; set; }
